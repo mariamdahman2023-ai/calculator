@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آلة حاسبة</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+  body { background: #0f0f23; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+  .calc {
+    direction: ltr;
+    background: #1e1e3a;
+    padding: 20px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 340px;
+  }
+  #display {
+    background: #111128;
+    color: white;
+    font-size: 38px;
+    font-weight: bold;
+    text-align: right;
+    padding: 20px 15px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    min-height: 75px;
+    overflow: hidden;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 18px 0;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background: #2e2e4d;
+  }
+  button:active { opacity: 0.7; }
+  .op { background: #4a3b1a; color: #ffcc00; }
+  .clear { background: #4a1e1e; color: #ff4444; }
+  .del { background: #4a1e1e; color: #ff4444; }
+  .wide-2 { grid-column: span 2; }
+  .equal { background: #ffcc00; color: black; grid-column: span 2; font-size: 22px; }
+</style>
+</head>
+<body>
+
+<div class="calc">
+  <div id="display">0</div>
+  <div class="buttons">
+    <button class="clear" onclick="clearAll()">C</button>
+    <button class="del" onclick="backspace()">⌫</button>
+    <button class="op" onclick="setOp('%')">%</button>
+    <button class="op" onclick="setOp('/')">÷</button>
+
+    <button onclick="addNum('7')">7</button>
+    <button onclick="addNum('8')">8</button>
+    <button onclick="addNum('9')">9</button>
+    <button class="op" onclick="setOp('*')">×</button>
+
+    <button onclick="addNum('4')">4</button>
+    <button onclick="addNum('5')">5</button>
+    <button onclick="addNum('6')">6</button>
+    <button class="op" onclick="setOp('-')">−</button>
+
+    <button onclick="addNum('1')">1</button>
+    <button onclick="addNum('2')">2</button>
+    <button onclick="addNum('3')">3</button>
+    <button class="op" onclick="setOp('+')">+</button>
+
+    <button class="wide-2" onclick="addNum('0')">0</button>
+    <button onclick="addNum('.')">.</button>
+    <button class="op" onclick="setOp('/')">÷</button>
+
+    <button class="equal" onclick="calculate()">=</button>
+  </div>
+</div>
+
+<script>
+let current = '0';
+let previous = '';
+let operation = null;
+let newNumber = true;
+
+function updateDisplay() {
+    document.getElementById('display').textContent = current;
+}
+function addNum(num) {
+    if (newNumber) {
+        if (num === '.') current = '0.';
+        else current = num;
+        newNumber = false;
+    } else {
+        if (current === '0' && num !== '.') current = num;
+        else if (num === '.' && current.includes('.')) return;
+        else current += num;
+    }
+    updateDisplay();
+}
+function setOp(op) {
+    if (operation !== null) calculate();
+    previous = current;
+    operation = op;
+    newNumber = true;
+    updateDisplay();
+}
+function calculate() {
+    if (operation === null) return;
+    let a = parseFloat(previous);
+    let b = parseFloat(current);
+    let result = 0;
+    if (operation === '+') result = a + b;
+    if (operation === '-') result = a - b;
+    if (operation === '*') result = a * b;
+    if (operation === '/') result = b === 0 ? 'Error' : a / b;
+    if (operation === '%') result = a % b;
+    current = String(result);
+    operation = null;
+    previous = '';
+    newNumber = true;
+    updateDisplay();
+}
+function clearAll() {
+    current = '0'; previous = ''; operation = null; newNumber = true;
+    updateDisplay();
+}
+function backspace() {
+    if (newNumber) return;
+    current = current.length > 1 ? current.slice(0, -1) : '0';
+    updateDisplay();
+}
+</script>
+
+</body>
+</html>
